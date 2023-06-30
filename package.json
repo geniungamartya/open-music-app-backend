@@ -8,12 +8,20 @@
     "lint": "eslint ./"
   },
   "keywords": [],
-  "author": "",
+  "author": "Geniung Rizki Amartya",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.43.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
     "nodemon": "^2.0.22"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^21.3.2",
+    "dotenv": "^16.3.1",
+    "joi": "^17.9.2",
+    "nanoid": "^4.0.2",
+    "node-pg-migrate": "^6.2.2",
+    "pg": "^8.11.1"
   }
 }
