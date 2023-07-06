@@ -44,7 +44,6 @@ class SongService {
           text: 'SELECT id, title, performer ' +
           'FROM song ',
         };
-        console.log('case one true');
         break;
       case (!title || !performer):
         query = {
@@ -53,7 +52,6 @@ class SongService {
             'WHERE title ILIKE $1 or performer ILIKE $2',
           values: [`%${title}%`, `%${performer}%`],
         };
-        console.log('case 2 true');
         break;
       default:
         query = {
@@ -62,7 +60,6 @@ class SongService {
             'WHERE title ILIKE $1 and performer ILIKE $2',
           values: [`%${title}%`, `%${performer}%`],
         };
-        console.log('case 3 true');
         break;
     };
     const rows = await this.pool.query(query);

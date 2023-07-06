@@ -43,9 +43,6 @@ class AlbumService {
       throw new NotFoundError('song not found');
     };
 
-    if (!song.rowCount) {
-      return album.rows[0];
-    };
     const albumSong = album.rows[0];
     albumSong.songs = song.rows;
 
