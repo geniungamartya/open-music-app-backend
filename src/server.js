@@ -1,16 +1,23 @@
+// Hapi
 const Hapi = require('@hapi/hapi');
+const Jwt = require('@hapi/jwt');
 
 // plugin
 const album = require('./api/album');
 const song = require('./api/song');
+const playlist = require('./api/playlist');
+const collaboration = require('./api/collaboration');
 
 // service
 const AlbumsService = require('./services/postgres/AlbumsService');
 const SongsService = require('./services/postgres/SongsService');
+const PlaylistsService = require('./services/postgres/PlaylistsService');
+const CollaborationService = require('./services/postgres/CollabolrationsService');
 
 // validator
 const AlbumsValidator = require('./validator/album');
 const SongValidator = require('./validator/song');
+const PlaylistValidator = require('./validator/playlist');
 
 // database
 require('dotenv').config();
@@ -26,6 +33,7 @@ const AuthenticationsService = require('./services/postgres/AuthenticationsServi
 const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationsValidator = require('./validator/authentications');
 
+// error handler
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
@@ -33,6 +41,8 @@ const init = async () => {
   const songService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
+  const collaborationService = new CollaborationService();
+  const playlistService = new PlaylistsService(collaborationService);
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -52,7 +62,7 @@ const init = async () => {
   ]);
 
   // mendefinisikan strategy autentikasi jwt
-  server.auth.strategy('openmusicapp_jwt', 'jwt', {
+  server.auth.strategy('openmusic_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
     verify: {
       aud: false,
@@ -97,6 +107,22 @@ const init = async () => {
         usersService,
         tokenManager: TokenManager,
         validator: AuthenticationsValidator,
+      },
+    },
+    {
+      plugin: playlist,
+      options: {
+        playlistService,
+        validator: PlaylistValidator,
+      },
+    },
+    {
+      plugin: collaboration,
+      options: {
+        collaborationService,
+        playlistService,
+        userService,
+        validator: CollaborationValidator,
       },
     },
   ]);
