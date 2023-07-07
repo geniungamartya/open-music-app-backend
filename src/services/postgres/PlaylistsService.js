@@ -130,9 +130,7 @@ class PlaylistService {
       values: [id, songId],
     };
 
-    console.log(`${songId} removed from ${id}`);
     const result = await this.pool.query(query);
-    console.log(result.rows);
 
     if (!result.rowCount) {
       throw new NotFoundError('playlist not found');
@@ -167,7 +165,6 @@ class PlaylistService {
       }
 
       try {
-        console.log('error = forbiden');
         await this._collaborationService.verifyCollaborator(playlistId, userId);
       } catch {
         throw error;
