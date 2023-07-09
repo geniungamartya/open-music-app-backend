@@ -62,7 +62,7 @@ class ActivityService {
     };
 
     const result = await this.pool.query(query);
-    console.log(result.rows);
+
     if (!result.rowCount) {
       throw new InvariantError('action not recorded');
     }

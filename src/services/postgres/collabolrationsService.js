@@ -15,7 +15,6 @@ class CollaborationService {
     };
 
     const result = await this.pool.query(query);
-    console.log(result);
 
     if (!result.rowCount) {
       throw new InvariantError('Failed to add collaboration');
