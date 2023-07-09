@@ -13,9 +13,9 @@ class CollaborationService {
       text: 'INSERT INTO collaborations VALUES($1, $2, $3) RETURNING id',
       values: [id, playlistId, UserId],
     };
-    console.log(`${id} created ad collaboration id`);
 
     const result = await this.pool.query(query);
+    console.log(result);
 
     if (!result.rowCount) {
       throw new InvariantError('Failed to add collaboration');
@@ -40,7 +40,6 @@ class CollaborationService {
   }
 
   async verifyCollaborator(playlistId, userId) {
-    console.log('verifing colaborator');
     const query = {
       text: `SELECT * 
       FROM collaborations 
@@ -49,7 +48,7 @@ class CollaborationService {
     };
 
     const result = await this.pool.query(query);
-    console.log('verified as collaborator');
+
     if (!result.rowCount) {
       throw new InvariantError('Failed to Verified collaborator');
     }

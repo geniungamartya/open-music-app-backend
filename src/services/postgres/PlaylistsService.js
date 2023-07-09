@@ -13,7 +13,7 @@ class PlaylistService {
   async addPlaylist({name, owner}) {
     const id = `playlist-${nanoid(16)}`;
     const query = {
-      text: `INSERT INTO playlists VALUES($1, $2, $3) RETURNING id`,
+      text: `INSERT INTO playlists VALUES($1, $2, $3) RETURNING id;`,
       values: [id, name, owner],
     };
 
@@ -47,7 +47,7 @@ class PlaylistService {
 
   async verifySongId(songId) {
     const query = {
-      text: `SELECT id FROM songs WHERE id = $1`,
+      text: `SELECT id FROM song WHERE id = $1`,
       values: [songId],
     };
 
@@ -84,10 +84,10 @@ class PlaylistService {
   async getSongsPlaylist(playlistId) {
     const songQuery = {
       text: `
-      SELECT songs.id, songs.title, songs.performer
-      FROM songs
+      SELECT song.id, song.title, song.performer
+      FROM song
       INNER JOIN song_to_playlist As rel
-      ON rel.song_id=songs.id
+      ON rel.song_id=song.id
       WHERE rel.playlist_id = $1`,
       values: [playlistId],
     };

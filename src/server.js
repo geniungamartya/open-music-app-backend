@@ -7,17 +7,20 @@ const album = require('./api/album');
 const song = require('./api/song');
 const playlist = require('./api/playlist');
 const collaboration = require('./api/collaboration');
+const activity = require('./api/activity');
 
 // service
 const AlbumsService = require('./services/postgres/AlbumsService');
 const SongsService = require('./services/postgres/SongsService');
 const PlaylistsService = require('./services/postgres/PlaylistsService');
 const CollaborationService = require('./services/postgres/CollabolrationsService');
+const ActivityService = require('./services/postgres/ActivitiesService');
 
 // validator
 const AlbumsValidator = require('./validator/album');
 const SongValidator = require('./validator/song');
 const PlaylistValidator = require('./validator/playlist');
+const CollaborationValidator = require('./validator/collaboration');
 
 // database
 require('dotenv').config();
@@ -42,6 +45,7 @@ const init = async () => {
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
   const collaborationService = new CollaborationService();
+  const activityService = new ActivityService();
   const playlistService = new PlaylistsService(collaborationService);
 
   const server = Hapi.server({
@@ -114,6 +118,7 @@ const init = async () => {
       options: {
         playlistService,
         validator: PlaylistValidator,
+        activityService,
       },
     },
     {
@@ -121,8 +126,15 @@ const init = async () => {
       options: {
         collaborationService,
         playlistService,
-        userService,
+        usersService,
         validator: CollaborationValidator,
+      },
+    },
+    {
+      plugin: activity,
+      options: {
+        activityService,
+        playlistService,
       },
     },
   ]);

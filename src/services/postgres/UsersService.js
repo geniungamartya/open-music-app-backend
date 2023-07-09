@@ -54,7 +54,7 @@ class UsersService {
     }
 
     return result.rows[0];
-  }
+  };
 
   async verifyUserCredential(username, password) {
     const query = {

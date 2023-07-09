@@ -24,7 +24,8 @@ class ActivityService {
     } catch (error) {
       throw error;
     }
-  }
+  };
+
   async recordDelete({
     playlistId,
     songId,
@@ -41,7 +42,8 @@ class ActivityService {
     } catch (error) {
       throw error;
     }
-  }
+  };
+
   async addActivity({
     playlistId,
     songId,
@@ -60,11 +62,12 @@ class ActivityService {
     };
 
     const result = await this.pool.query(query);
-
+    console.log(result.rows);
     if (!result.rowCount) {
       throw new InvariantError('action not recorded');
     }
-  }
+  };
+
   async isPlaylist(playlistId) {
     const query = {
       text: `
@@ -84,14 +87,14 @@ class ActivityService {
       text: `
         SELECT 
         users.username, 
-        songs.title,
+        song.title,
         activities.action,
         activities.time
         FROM activities
         INNER JOIN users
         ON activities.user_id = users.id
-        INNER JOIN songs
-        ON activities.song_id = songs.id
+        INNER JOIN song
+        ON activities.song_id = song.id
         WHERE activities.playlist_id = $1
         `,
       values: [playlistId],
@@ -102,7 +105,7 @@ class ActivityService {
     data.activities = result.rows;
 
     return data;
-  }
+  };
 }
 
 module.exports = ActivityService;
