@@ -7,13 +7,13 @@ module.exports = {
   register: async (server, {
     collaborationService,
     playlistService,
-    userService,
+    usersService,
     validator,
   }) => {
     const collaborationHandler = new CollaborationHandler(
         collaborationService,
         playlistService,
-        userService,
+        usersService,
         validator,
     );
 

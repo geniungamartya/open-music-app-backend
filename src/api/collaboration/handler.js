@@ -18,9 +18,9 @@ class CollaborationHandler {
     await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
 
     await this._usersService.getUserById(userId);
-    // eslint-disable-next-line max-len
+
     const collaborationId = await this._collaborationsService.addCollaboration(playlistId, userId);
-    console.log('added collaboration');
+
     const response = h.response({
       status: 'success',
       message: 'collaboration added',
