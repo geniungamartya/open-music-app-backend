@@ -74,6 +74,26 @@ class AlbumService {
       throw new NotFoundError('song not found');
     };
   };
+
+  async addCoverUrlAlbum(id, dir) {
+    console.log(dir);
+    const query = {
+      text: `
+      UPDATE albums
+      SET cover_url = $1
+      WHERE id = $2
+      RETURNING id`,
+      values: [dir, id],
+    };
+
+    const result = await this.pool.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError('failed to add cover, album not found');
+    };
+
+    await this._cacheService.delete(`getalbum:${id}`);
+  };
 };
 
 module.exports = AlbumService;
