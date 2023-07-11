@@ -8,6 +8,7 @@ const song = require('./api/song');
 const playlist = require('./api/playlist');
 const collaboration = require('./api/collaboration');
 const activity = require('./api/activity');
+const _export = require('./api/export');
 
 // service
 const AlbumsService = require('./services/postgres/AlbumsService');
@@ -15,12 +16,14 @@ const SongsService = require('./services/postgres/SongsService');
 const PlaylistsService = require('./services/postgres/PlaylistsService');
 const CollaborationService = require('./services/postgres/CollabolrationsService');
 const ActivityService = require('./services/postgres/ActivitiesService');
+const ProducerService = require('./services/rabbitmq/ProducerSevice');
 
 // validator
 const AlbumsValidator = require('./validator/album');
 const SongValidator = require('./validator/song');
 const PlaylistValidator = require('./validator/playlist');
 const CollaborationValidator = require('./validator/collaboration');
+const ExportValidator = require('./validator/export');
 
 // database
 require('dotenv').config();
@@ -134,6 +137,14 @@ const init = async () => {
       plugin: activity,
       options: {
         activityService,
+        playlistService,
+      },
+    },
+    {
+      plugin: _export,
+      options: {
+        service: ProducerService,
+        validator: ExportValidator,
         playlistService,
       },
     },
