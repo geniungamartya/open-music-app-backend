@@ -30,6 +30,7 @@ class AlbumService {
   async getAlbumById(id) {
     try {
       const result = await this._cacheService.get(`getalbum:${id}`);
+      console.log('from cacge');
       const parsing = JSON.parse(result);
       const cache = true;
       return {
@@ -37,6 +38,7 @@ class AlbumService {
         album: parsing,
       };
     } catch (error) {
+      console.log('from db..');
       const query = {
         text: 'SELECT * FROM album WHERE id = $1',
         values: [id],
@@ -56,14 +58,16 @@ class AlbumService {
 
       // inserting song object
       const albumSong = album.rows.map(mapDBToModelGetAlbum)[0];
+      console.log(albumSong);
       albumSong.songs = song.rows;
+      console.log(albumSong);
 
       await this._cacheService.set(
           `getalbum:${id}`,
           JSON.stringify(albumSong),
       );
 
-      return {albumSong};
+      return {album: albumSong};
     };
   };
 

@@ -63,7 +63,9 @@ class SongService {
         break;
     };
     const rows = await this.pool.query(query);
-    return rows.rows;
+    const songs = rows.rows;
+
+    return {songs: songs};
   };
 
   async getSongById(id) {
@@ -78,7 +80,9 @@ class SongService {
       throw new NotFoundError('song not found');
     };
 
-    return result.rows.map(mapDBToModel)[0];
+    const song = result.rows.map(mapDBToModel)[0];
+
+    return {song};
   };
 
   async editSongById(id, {title, year, genre, performer, duration, albumId}) {

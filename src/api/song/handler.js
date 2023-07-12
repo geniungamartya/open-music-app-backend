@@ -26,7 +26,7 @@ class SongHandler {
     return response;
   };
 
-  async getSongsHandler(request) {
+  async getSongsHandler(request, h) {
     const params = request.query;
     const {cache, songs} = await this._service.getSongs(params);
 

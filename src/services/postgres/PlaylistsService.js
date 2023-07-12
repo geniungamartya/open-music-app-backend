@@ -29,7 +29,7 @@ class PlaylistService {
     return result.rows[0].id;
   };
 
-  async addSongsPlaylist(playlistId, songId) {
+  async addSongsPlaylist(playlistId, songId, owner) {
     const id = `song_playlist-${nanoid(16)}`;
 
     const query = {
