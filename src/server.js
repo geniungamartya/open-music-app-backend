@@ -21,6 +21,7 @@ const CollaborationService = require('./services/postgres/CollabolrationsService
 const ActivityService = require('./services/postgres/ActivitiesService');
 const ProducerService = require('./services/rabbitmq/ProducerSevice');
 const StorageService = require('./services/storage/StorageService');
+const CacheService = require('./services/redis/CacheService');
 
 // validator
 const AlbumsValidator = require('./validator/album');
@@ -48,13 +49,14 @@ const AuthenticationsValidator = require('./validator/authentications');
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
-  const albumService = new AlbumsService();
+  const cacheService = new CacheService();
+  const albumService = new AlbumsService(cacheService);
   const songService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
   const collaborationService = new CollaborationService();
   const activityService = new ActivityService();
-  const playlistService = new PlaylistsService(collaborationService);
+  const playlistService = new PlaylistsService(collaborationService, cacheService);
   const storageService = new StorageService(path.resolve(__dirname, 'api/upload/file/images'));
 
   const server = Hapi.server({

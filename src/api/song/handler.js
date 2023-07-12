@@ -28,26 +28,31 @@ class SongHandler {
 
   async getSongsHandler(request) {
     const params = request.query;
-    const songs = await this._service.getSongs(params);
+    const {cache, songs} = await this._service.getSongs(params);
 
-    return {
+    const response = h.response({
       status: 'success',
       data: {
         songs,
       },
-    };
+    });
+    if (cache) response.header('X-Data-Source', 'cache');
+    return response;
   };
 
   async getSongByIdHandler(request, h) {
     const {id} = request.params;
-    const song = await this._service.getSongById(id);
+    const {cache, song} = await this._service.getSongById(id);
 
-    return {
+    const response = h.response( {
       status: 'success',
       data: {
         song,
       },
-    };
+    });
+
+    if (cache) response.header('X-Data-Source', 'cache');
+    return response;
   };
 
   async putSongByIdHandler(request, h) {

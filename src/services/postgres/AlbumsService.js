@@ -2,9 +2,11 @@ const {Pool} = require('pg');
 const {nanoid} = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
+const {mapDBToModelGetAlbum} = require('../../utils');
 
 class AlbumService {
-  constructor() {
+  constructor(cacheService) {
+    this._cacheService = cacheService;
     this.pool = new Pool();
   };
 
@@ -26,27 +28,43 @@ class AlbumService {
   };
 
   async getAlbumById(id) {
-    const query = {
-      text: 'SELECT * FROM album WHERE id = $1',
-      values: [id],
+    try {
+      const result = await this._cacheService.get(`getalbum:${id}`);
+      const parsing = JSON.parse(result);
+      const cache = true;
+      return {
+        cache,
+        album: parsing,
+      };
+    } catch (error) {
+      const query = {
+        text: 'SELECT * FROM album WHERE id = $1',
+        values: [id],
+      };
+
+      const songquery = {
+        text: 'SELECT id, title, performer FROM song WHERE album_id = $1',
+        values: [id],
+      };
+
+      const album = await this.pool.query(query);
+      const song = await this.pool.query(songquery);
+
+      if (!album.rowCount) {
+        throw new NotFoundError('song not found');
+      };
+
+      // inserting song object
+      const albumSong = album.rows.map(mapDBToModelGetAlbum)[0];
+      albumSong.songs = song.rows;
+
+      await this._cacheService.set(
+          `getalbum:${id}`,
+          JSON.stringify(albumSong),
+      );
+
+      return {albumSong};
     };
-
-    const songquery = {
-      text: 'SELECT id, title, performer FROM song WHERE album_id = $1',
-      values: [id],
-    };
-
-    const album = await this.pool.query(query);
-    const song = await this.pool.query(songquery);
-
-    if (!album.rowCount) {
-      throw new NotFoundError('song not found');
-    };
-
-    const albumSong = album.rows[0];
-    albumSong.songs = song.rows;
-
-    return albumSong;
   };
 
   async editAlbumById(id, {name, year}) {
@@ -60,6 +78,8 @@ class AlbumService {
     if (!result.rowCount) {
       throw new NotFoundError('Failed to edit album, id not found.');
     };
+
+    await this._cacheService.delete(`getalbum:${id}`);
   };
 
   async deleteAlbumById(id) {
@@ -73,6 +93,8 @@ class AlbumService {
     if (!result.rowCount) {
       throw new NotFoundError('song not found');
     };
+
+    await this._cacheService.delete(`getalbum:${id}`);
   };
 
   async addCoverUrlAlbum(id, dir) {
