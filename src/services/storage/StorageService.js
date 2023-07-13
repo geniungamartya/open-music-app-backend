@@ -10,9 +10,9 @@ class StorageService {
   }
 
   writeFile(file, meta) {
-    console.log(`Write file, filename: ${meta}`);
     const filename = +new Date() + meta.filename;
     const path = `${this._folder}/${filename}`;
+    console.log(`Write file, filename: ${path}`);
     const fileStream = fs.createWriteStream(path);
 
     return new Promise((resolve, reject) => {

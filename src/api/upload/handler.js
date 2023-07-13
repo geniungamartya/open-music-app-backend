@@ -14,15 +14,13 @@ class UploadHandler {
 
     await this._albumService.getAlbumById(id);
     const filename = await this._service.writeFile(cover, cover.hapi);
-
-    filepath = `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`;
-    await this._albumService.addCoverUrlAlbum(id, filepath);
+    await this._albumService.addCoverUrlAlbum(id, `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`);
 
     const response = h.response({
       status: 'success',
       message: 'Cover uploaded successfully',
       data: {
-        fileLocation: filepath,
+        fileLocation: `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`,
       },
     });
     response.code(201);

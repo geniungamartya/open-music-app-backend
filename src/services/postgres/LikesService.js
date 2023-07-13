@@ -2,6 +2,7 @@ const {nanoid} = require('nanoid');
 const {Pool} = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
+const ClientError = require('../../exceptions/ClientError');
 
 class LikeService {
   constructor(cacheService) {
@@ -24,11 +25,10 @@ class LikeService {
     if (!qLikeResult.rowCount) {
       const message = await this.addLike(userId, albumId);
       return message;
-    }
-
-    const message = await this.deleteLike(userId, albumId);
-    return message;
-  }
+    } else {
+      throw new ClientError('Cant Double like');
+    };
+  };
 
   async getLike(albumId) {
     try {

@@ -30,9 +30,10 @@ class AlbumService {
   async getAlbumById(id) {
     try {
       const result = await this._cacheService.get(`getalbum:${id}`);
-      console.log('from cacge');
+      console.log('from cache..');
       const parsing = JSON.parse(result);
       const cache = true;
+      console.log(parsing);
       return {
         cache,
         album: parsing,
@@ -105,7 +106,7 @@ class AlbumService {
     console.log(dir);
     const query = {
       text: `
-      UPDATE albums
+      UPDATE album
       SET cover_url = $1
       WHERE id = $2
       RETURNING id`,

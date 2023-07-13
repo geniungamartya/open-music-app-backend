@@ -146,7 +146,7 @@ class PlaylistService {
     };
   };
 
-  async deletePlaylistById(id) {
+  async deletePlaylistById(id, owner) {
     const query = {
       text: 'DELETE FROM playlists WHERE id = $1 RETURNING id',
       values: [id],
@@ -162,7 +162,7 @@ class PlaylistService {
     await this._cacheService.delete(`songplaylist:${id}`);
   };
 
-  async deleteSongPlaylist(id, songId) {
+  async deleteSongPlaylist(id, songId, owner) {
     const query = {
       text: `DELETE
       FROM song_to_playlist
@@ -206,15 +206,30 @@ class PlaylistService {
     } catch (error) {
       if (error instanceof NotFoundError) {
         throw error;
-      }
+      };
 
       try {
         await this._collaborationService.verifyCollaborator(playlistId, userId);
       } catch {
         throw error;
-      }
+      };
+    };
+  };
+  // checking playlist with id
+  async isPlaylist(playlistId) {
+    const query = {
+      text: `
+        SELECT id
+        FROM playlists
+        WHERE id = $1`,
+      values: [playlistId],
+    };
+
+    const result = await this.pool.query(query);
+    if (!result.rowCount) {
+      throw new NotFoundError('activity not found');
     }
-  }
-}
+  };
+};
 
 module.exports = PlaylistService;
